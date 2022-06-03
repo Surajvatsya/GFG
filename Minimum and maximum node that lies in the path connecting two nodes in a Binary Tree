@@ -1,0 +1,127 @@
+// C++ implementation of the approach
+#include <bits/stdc++.h>
+using namespace std;
+
+// Structure of binary tree
+struct Node {
+	Node* left;
+	Node* right;
+	int val;
+};
+
+// Function to create a new node
+Node* newNode(int key)
+{
+	Node* node = new Node();
+	node->left = node->right = NULL;
+	node->val = key;
+	return node;
+}
+
+
+
+void checkPresent(Node*root, int a,int b,int &f1,int &f2){
+   if(!root)
+   return;
+   if(root->val==a)
+   f1=1;
+   if(root->val==b)
+   f2=1;
+   if(f1 and f2)
+   return;
+   	checkPresent(root->left,a,b,f1,f2);
+   	checkPresent(root->right,a,b,f1,f2);
+}
+Node* locoan(Node*root , int a, int b){
+    if(!root)
+    return root;
+    
+    
+    
+    if(root->val==a or root->val==b)
+    return root;
+    
+  Node*l=  locoan(root->left,a,b);
+  Node*r = locoan(root->right,a,b);
+  
+  if(l and r)
+  return root;
+  else
+  return l?l:r;
+    
+}
+
+
+
+
+
+void minMaxNodeInPath(Node *root,int a, vector<int>&p1, vector<int>&a1){
+    if(!root)
+    return;
+  
+  p1.push_back(root->val);
+  
+  if(root->val==a){
+      a1=p1;
+      return;
+  }
+  
+  
+  
+   minMaxNodeInPath(root->left, a, p1,a1);
+   minMaxNodeInPath(root->right, a, p1,a1);
+   p1.pop_back();  
+  
+    
+    
+}
+
+int main()
+{
+	Node* root = newNode(20);
+	root->left = newNode(8);
+	root->right = newNode(22);
+	root->left->left = newNode(0);
+	root->left->right = newNode(3);
+	root->right->left = newNode(4);
+	root->right->right = newNode(25);
+	root->left->right->left = newNode(10);
+	root->left->right->right = newNode(25);
+
+	int a = 0;
+	int b = 25;
+	int f1=0,f2=0;
+	checkPresent(root,a,b,f1,f2);
+	vector<int>v;
+	int mx1=INT_MIN;
+int mn1=INT_MAX;
+
+vector<int>p1;
+vector<int>a1;
+vector<int>a2;
+vector<int>p2;
+	if(f1 and f2){
+	     Node* lca = locoan(root,a,b);
+	     minMaxNodeInPath(lca, a,p1,a1);
+	     minMaxNodeInPath(lca, b,p2,a2);
+	    sort(a1.begin(),a1.end());
+	     sort(a2.begin(),a2.end());
+	     mn1 = min(a1[0],a2[0]);
+	     mx1 = max(a1[a1.size()-1], a2[a2.size()-1]);
+	   //  for(auto x : a1)
+	   //  cout<<x<<" ";
+	   //  cout<<endl;
+	   //  for(auto x : a2)
+	   //  cout<<x<<" ";
+	   //  cout<<endl;
+	     
+	     
+	    cout<<mn1<< " "<< mx1;
+	}
+	else
+	cout<<-1;
+
+	
+
+	return 0;
+}
